@@ -28,10 +28,10 @@ exports.findById = function (req, res) {
 
 exports.update = function (req, res) {
   if (
-    req.body.constructor === Object &&
-    Object.keys(req.body).includes(username) &&
-    Object.keys(req.body).includes(password) &&
-    Object.keys(req.body).includes(email)
+    (req.body.constructor === Object && Object.keys(req.body).length === 0) ||
+    !Object.keys(req.body).includes("username") ||
+    !Object.keys(req.body).includes("password") ||
+    !Object.keys(req.body).includes("email")
   ) {
     res
       .status(400)
@@ -74,7 +74,7 @@ exports.doesEmailExist = function (req, res) {
   })
 }
 
-exports.apiLogin = function (req, res) {
+exports.login = function (req, res) {
   User.login(req.body, function (err, user) {
     if (err) {
       if (err.message === "Wrong username or password.") {
@@ -105,7 +105,7 @@ exports.apiLogin = function (req, res) {
   })
 }
 
-exports.apiRegister = function (req, res) {
+exports.register = function (req, res) {
   User.register(req.body, function (err, user) {
     if (err) {
       res.status(500).send(err)
@@ -127,4 +127,13 @@ exports.apiRegister = function (req, res) {
       })
     }
   })
+}
+
+exports.checkIfLoggedIn = function (req, res, next) {
+  try {
+    req.user = jwt.verify(req.body.token, process.env.JWTSECRET)
+    next()
+  } catch (e) {
+    res.status(500).send("Token is invalid!")
+  }
 }

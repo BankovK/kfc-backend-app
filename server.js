@@ -16,8 +16,11 @@ app.use(bodyParser.json())
 const userRoutes = require("./src/routes/user.routes")
 app.use("/api/users", userRoutes)
 // Require order routes
-// const orderRoutes = require("./src/routes/order.routes")
-// app.use("/api/orders", orderRoutes)
+const orderRoutes = require("./src/routes/order.routes")
+app.use("/api/orders", orderRoutes)
+// Require product routes
+const productRoutes = require("./src/routes/product.routes")
+app.use("/api/products", productRoutes)
 // listen for requests
 app.listen(port, () => {
   console.log(`Server is listening on port ${port}`)
