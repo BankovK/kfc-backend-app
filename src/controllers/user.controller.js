@@ -35,7 +35,7 @@ exports.update = function (req, res) {
   ) {
     res
       .status(400)
-      .send({ error: true, message: "Please provide all required field" })
+      .send({ error: true, message: "Please provide all required fields" })
   } else {
     User.update(req.params.id, new User(req.body), function (err, user) {
       if (err) res.send(err)

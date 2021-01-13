@@ -7,24 +7,27 @@ var Order = function (order, user) {
   this.client_id = user.id
 }
 
+Order.findAll = function (result) {
+  dbConn.query(
+    "SELECT * FROM orders ORDER BY created_at ASC",
+    function (err, res) {
+      if (err) {
+        console.log("error: ", err)
+        result(err, null)
+      } else {
+        console.log("Orders : ", res)
+        result(null, res)
+      }
+    }
+  )
+}
+
 // Order.findById = function (id, result) {
 //   dbConn.query("SELECT * FROM orders WHERE id = ?", id, function (err, res) {
 //     if (err) {
 //       console.log("error: ", err)
 //       result(err, null)
 //     } else {
-//       result(null, res)
-//     }
-//   })
-// }
-
-// Order.findAll = function (result) {
-//   dbConn.query("SELECT * FROM orders", function (err, res) {
-//     if (err) {
-//       console.log("error: ", err)
-//       result(err, null)
-//     } else {
-//       console.log("Orders : ", res)
 //       result(null, res)
 //     }
 //   })
@@ -48,26 +51,27 @@ Order.create = function (newOrder, basket, result) {
         console.log("error: ", err)
         result(err, null)
       } else {
-        result(null, null)
+        result(null, res[0][0])
       }
     }
   )
 }
 
-// Order.update = function (id, order, result) {
-//   dbConn.query(
-//     "UPDATE orders SET username=?, client_id=? WHERE id = ?",
-//     [order.username, order.status, order.client_id, id],
-//     function (err, res) {
-//       if (err) {
-//         console.log("error: ", err)
-//         result(err, null)
-//       } else {
-//         result(null, res)
-//       }
-//     }
-//   )
-// }
+Order.update = function (id, order, result) {
+  dbConn.query(
+    "CALL update_order(?, ?)",
+    [order.status, id],
+    function (err, res) {
+      if (err) {
+        console.log("error: ", err)
+        result(err, null)
+      } else {
+        console.log("here", res[0][0])
+        result(null, res[0][0])
+      }
+    }
+  )
+}
 
 // Order.delete = function (id, result) {
 //   dbConn.query("DELETE FROM orders WHERE id = ?", [id], function (err, res) {
