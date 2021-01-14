@@ -98,6 +98,7 @@ exports.login = function (req, res) {
           process.env.JWTSECRET,
           { expiresIn: tokenLasts }
         ),
+        user_id: user.id,
         username: user.username,
         is_admin: user.is_admin
       })
@@ -122,6 +123,7 @@ exports.register = function (req, res) {
           process.env.JWTSECRET,
           { expiresIn: tokenLasts }
         ),
+        user_id: user.id,
         username: user.username,
         is_admin: user.is_admin
       })

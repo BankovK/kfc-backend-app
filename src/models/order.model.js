@@ -66,22 +66,34 @@ Order.update = function (id, order, result) {
         console.log("error: ", err)
         result(err, null)
       } else {
-        console.log("here", res[0][0])
         result(null, res[0][0])
       }
     }
   )
 }
 
-// Order.delete = function (id, result) {
-//   dbConn.query("DELETE FROM orders WHERE id = ?", [id], function (err, res) {
-//     if (err) {
-//       console.log("error: ", err)
-//       result(err, null)
-//     } else {
-//       result(null, res)
-//     }
-//   })
-// }
+Order.delete = function (id, result) {
+  dbConn.query("DELETE FROM orders WHERE id = ?", [id], function (err) {
+    if (err) {
+      console.log("error: ", err)
+      result(err)
+    } else {
+      result(null)
+    }
+  })
+}
+
+Order.deleteFinishedOrders = function (result) {
+  // "DELETE FROM orders WHERE status=3 AND updated_at < DATE_SUB(NOW(), INTERVAL 5 MINUTE);" is called here
+  dbConn.query("CALL delete_finished_orders()", function (err, res) {
+    if (err) {
+      console.log("error: ", err)
+      result(err, null)
+    } else {
+      let deletedIds = res[0].map(order => order.id)
+      result(null, deletedIds)
+    }
+  })
+}
 
 module.exports = Order

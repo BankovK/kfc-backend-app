@@ -1,3 +1,5 @@
+const Order = require("./src/models/order.model")
+
 const express = require("express")
 const bodyParser = require("body-parser")
 const jwt = require("jsonwebtoken")
@@ -33,30 +35,67 @@ const io = require("socket.io")(server, {
 })
 
 io.on("connection", function (socket) {
-  socket.on("orderFromBrowser", function (data) {
+  setInterval(function () {
+    console.log("orders cleanup started")
+    Order.deleteFinishedOrders(function (err, res) {
+      if (err) {
+        throw err
+      } else {
+        if (res.length) {
+          console.log("deleted id ", res)
+          socket.broadcast.emit("deletedOrdersFromServer", res)
+        }
+      }
+    })
+  }, 60000)
+
+  socket.on("createdOrderFromBrowser", function (data) {
+    console.log("soket createdOrderFromBrowser")
     try {
-      jwt.verify(data.token, process.env.JWTSECRET)
-      socket.broadcast.emit("orderFromServer", data.order)
+      user = jwt.verify(data.token, process.env.JWTSECRET)
+      Order.create(new Order(data, user), data.basket, function (err, order) {
+        if (err) {
+          console.log("error ", err)
+          // error handling
+        } else {
+          console.log("created order ", order)
+          io.emit("createdOrderFromServer", order)
+        }
+      })
     } catch (e) {
-      console.log("Token is invalid!")
+      console.log(e)
     }
   })
-  socket.on("deleteOrderFromBrowser", function (data) {
+  socket.on("updatedOrderFromBrowser", function (data) {
+    console.log("soket updatedOrderFromBrowser")
     try {
-      jwt.verify(data.token, process.env.JWTSECRET)
-      socket.broadcast.emit("deleteOrderFromServer", data.orderId)
+      user = jwt.verify(data.token, process.env.JWTSECRET)
+      if (user.is_admin != 1) throw new Error("User is not admin!")
+      Order.update(
+        data.order.id,
+        new Order(data.order, user),
+        function (err, order) {
+          if (err) {
+            console.log("error ", err)
+            // error handling
+          } else {
+            console.log("updated order ", order)
+            socket.broadcast.emit("updatedOrderFromServer", order)
+          }
+        }
+      )
     } catch (e) {
-      console.log("Token is invalid!")
+      console.log(e)
     }
   })
-  socket.on("updateOrderFromBrowser", function (data) {
-    try {
-      jwt.verify(data.token, process.env.JWTSECRET)
-      socket.broadcast.emit("updateOrderFromServer", data.order)
-    } catch (e) {
-      console.log("Token is invalid!")
-    }
-  })
+  // socket.on("deletedOrderFromBrowser", function (data) {
+  //   try {
+  //     jwt.verify(data.token, process.env.JWTSECRET)
+  //     socket.broadcast.emit("deletedOrdersFromServer", [data.orderId])
+  //   } catch (e) {
+  //     console.log("Token is invalid!")
+  //   }
+  // })
 })
 
 // listen for requests
