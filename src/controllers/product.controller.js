@@ -7,7 +7,23 @@ exports.findAll = function (req, res) {
     if (err) {
       res.send(err)
     } else {
-      res.send(products)
+      let types = []
+      function capitalizeType(type) {
+        let words = type.split("_")
+        for (let i = 0; i < words.length; i++) {
+          words[i] = words[i].charAt(0).toUpperCase() + words[i].substring(1)
+        }
+        return words.join(" ")
+      }
+      products.forEach(product => {
+        let type = product.type
+        let typeNames = types.map(e => e.forUrl)
+        if (!typeNames.includes(type)) {
+          types.push({ forUrl: type, capitalized: capitalizeType(type) })
+        }
+      })
+      console.log({ products, types })
+      res.send({ products, types })
     }
   })
 }
