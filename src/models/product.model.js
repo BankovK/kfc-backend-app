@@ -9,7 +9,7 @@ var Product = function (product) {
 }
 
 Product.findById = function (id, result) {
-  dbConn.query("SELECT * FROM products WHERE id = ?", id, function (err, res) {
+  dbConn.query("SELECT * FROM `product` WHERE id = ?", id, function (err, res) {
     if (err) {
       console.log("error: ", err)
       result(err, null)
@@ -20,7 +20,7 @@ Product.findById = function (id, result) {
 }
 
 Product.findAll = function (result) {
-  dbConn.query("SELECT * FROM products", function (err, res) {
+  dbConn.query("SELECT * FROM `product`", function (err, res) {
     if (err) {
       console.log("error: ", err)
       result(err, null)

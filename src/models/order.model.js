@@ -9,7 +9,7 @@ var Order = function (order, user) {
 
 Order.findAll = function (result) {
   dbConn.query(
-    "SELECT * FROM orders ORDER BY created_at ASC",
+    "SELECT * FROM `order` ORDER BY created_at ASC",
     function (err, res) {
       if (err) {
         console.log("error: ", err)
@@ -44,7 +44,7 @@ function backetToString(basket) {
 Order.create = function (newOrder, basket, result) {
   basket = backetToString(basket)
   dbConn.query(
-    "CALL insert_order(?, ?, ?)",
+    "CALL p_order_insert_order(?, ?, ?)",
     [newOrder.username, newOrder.client_id, basket],
     function (err, res) {
       if (err) {
@@ -59,7 +59,7 @@ Order.create = function (newOrder, basket, result) {
 
 Order.update = function (id, order, result) {
   dbConn.query(
-    "CALL update_order(?, ?)",
+    "CALL p_order_update_order(?, ?)",
     [order.status, id],
     function (err, res) {
       if (err) {
@@ -73,7 +73,7 @@ Order.update = function (id, order, result) {
 }
 
 Order.delete = function (id, result) {
-  dbConn.query("DELETE FROM orders WHERE id = ?", [id], function (err) {
+  dbConn.query("DELETE FROM `order` WHERE id = ?", [id], function (err) {
     if (err) {
       console.log("error: ", err)
       result(err)
@@ -85,7 +85,7 @@ Order.delete = function (id, result) {
 
 Order.deleteFinishedOrders = function (result) {
   // "DELETE FROM orders WHERE status=3 AND updated_at < DATE_SUB(NOW(), INTERVAL 5 MINUTE);" is called here
-  dbConn.query("CALL delete_finished_orders()", function (err, res) {
+  dbConn.query("CALL p_order_delete_finished_orders()", function (err, res) {
     if (err) {
       console.log("error: ", err)
       result(err, null)

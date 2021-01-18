@@ -12,7 +12,7 @@ var User = function (user) {
 
 User.findById = function (id, result) {
   dbConn.query(
-    "SELECT * FROM users WHERE id = ? AND is_deleted != 1",
+    "SELECT * FROM `user` WHERE id = ? AND is_deleted != 1",
     id,
     function (err, res) {
       if (err) {
@@ -27,7 +27,7 @@ User.findById = function (id, result) {
 
 User.findAll = function (result) {
   dbConn.query(
-    "SELECT * FROM users WHERE is_deleted != 1",
+    "SELECT * FROM `user` WHERE is_deleted != 1",
     function (err, res) {
       if (err) {
         console.log("error: ", err)
@@ -41,7 +41,7 @@ User.findAll = function (result) {
 
 User.update = function (id, user, result) {
   dbConn.query(
-    "UPDATE users SET username=?,email=?,password=? WHERE id = ?",
+    "UPDATE `user` SET username=?,email=?,password=? WHERE id = ?",
     [user.username, user.email, user.password, id],
     function (err, res) {
       if (err) {
@@ -55,7 +55,7 @@ User.update = function (id, user, result) {
 }
 
 User.delete = function (id, result) {
-  dbConn.query("DELETE FROM users WHERE id = ?", [id], function (err, res) {
+  dbConn.query("DELETE FROM `user` WHERE id = ?", [id], function (err, res) {
     if (err) {
       console.log("error: ", err)
       result(err, null)
@@ -67,7 +67,7 @@ User.delete = function (id, result) {
 
 User.findByUsername = function (username, result) {
   dbConn.query(
-    "SELECT * FROM users WHERE username = ?",
+    "SELECT * FROM `user` WHERE username = ?",
     username,
     function (err, res) {
       if (err) {
@@ -82,7 +82,7 @@ User.findByUsername = function (username, result) {
 
 User.findByEmail = function (email, result) {
   dbConn.query(
-    "SELECT * FROM users WHERE email = ?",
+    "SELECT * FROM `user` WHERE email = ?",
     email,
     function (err, res) {
       if (err) {
@@ -110,7 +110,7 @@ function validateUserData(user) {
 User.login = function (user, result) {
   validateUserData(user)
   dbConn.query(
-    "SELECT * FROM users WHERE username = ?",
+    "SELECT * FROM `user` WHERE username = ?",
     user.username,
     function (err, res) {
       if (err) {
@@ -199,7 +199,7 @@ User.register = function (user, result) {
     let salt = bcrypt.genSaltSync(10)
     user.password = bcrypt.hashSync(user.password, salt)
     dbConn.query(
-      "CALL insert_user(?, ?, ?)",
+      "CALL p_user_insert_user(?, ?, ?)",
       [user.username, user.password, user.email],
       function (err, res) {
         if (err) {
