@@ -3,11 +3,11 @@
 const mysql = require("mysql")
 //local mysql db connection
 const dbConn = mysql.createConnection({
-  host: "sql7.freesqldatabase.com",
+  host: process.env.HOST,
   port: "3306",
-  user: "sql7387746",
-  password: "8MjvEpGki9",
-  database: "sql7387746"
+  user: process.env.USER,
+  password: process.env.PASSWORD,
+  database: process.env.DATABASE
 })
 dbConn.connect(function (err) {
   if (err) throw err

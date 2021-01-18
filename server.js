@@ -1,11 +1,12 @@
+const dotenv = require("dotenv")
+dotenv.config()
+
 const Order = require("./src/models/order.model")
 
 const express = require("express")
 const bodyParser = require("body-parser")
 const jwt = require("jsonwebtoken")
 var cors = require("cors")
-const dotenv = require("dotenv")
-dotenv.config()
 // create express app
 const app = express()
 app.use(cors())
@@ -88,14 +89,6 @@ io.on("connection", function (socket) {
       console.log(e)
     }
   })
-  // socket.on("deletedOrderFromBrowser", function (data) {
-  //   try {
-  //     jwt.verify(data.token, process.env.JWTSECRET)
-  //     socket.broadcast.emit("deletedOrdersFromServer", [data.orderId])
-  //   } catch (e) {
-  //     console.log("Token is invalid!")
-  //   }
-  // })
 })
 
 // listen for requests

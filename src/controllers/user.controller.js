@@ -77,14 +77,7 @@ exports.doesEmailExist = function (req, res) {
 exports.login = function (req, res) {
   User.login(req.body, function (err, user) {
     if (err) {
-      if (err.message === "Wrong username or password.") {
-        res.status(404).send({
-          error: true,
-          message: err.message
-        })
-      } else {
-        res.send(err)
-      }
+      res.status(404).send(err.message)
     } else {
       res.json({
         error: false,
